@@ -1,4 +1,4 @@
-# 🎯 CareerForge
+# CareerForge
 
 **AI-Powered Resume Optimization Platform**
 
@@ -42,7 +42,7 @@ CareerForge is a comprehensive AI-powered job search platform that helps job see
 
 ## **Demo**
 
-👉 **[Try CareerForge Live](https://oluwatosin-babatunde.github.io/careerforge)**
+**[Try CareerForge Live](https://oluwatosin-babatunde.github.io/careerforge)**
 
 ### **How It Works:**
 
@@ -154,7 +154,7 @@ CareerForge is part of a collection of AI-powered productivity tools:
 
 ---
 
-## 📄 **License**
+## **License**
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
@@ -177,13 +177,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## ⭐ **Star This Repo**
+## **Star This Repo**
 
 If CareerForge helped you land an interview or job, please consider giving it a star! It helps others discover this tool.
 
 ---
 
-## 📞 **Support**
+## **Support**
 
 Have questions or need help?
 
