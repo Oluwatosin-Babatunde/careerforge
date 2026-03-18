@@ -1,0 +1,28 @@
+# Netlify configuration for CareerForge
+
+[build]
+  # No build command needed for static site
+  publish = "."
+  
+[functions]
+  # Directory for serverless functions
+  directory = "netlify/functions"
+  
+  # Increase timeout for AI responses (max 26 seconds for free tier)
+  # Paid tiers support up to 10 minutes
+  node_bundler = "esbuild"
+
+[[redirects]]
+  # Redirect API calls to function
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[headers]]
+  # Security headers for all pages
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer-when-downgrade"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"

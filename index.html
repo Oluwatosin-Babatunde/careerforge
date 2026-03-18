@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CareerForge - 99% ATS Match Guaranteed</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.1.0/docx.min.js"></script>
+  <script src="https://unpkg.com/docx@7.8.2/build/index.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -176,25 +176,6 @@
       box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1);
     }
     
-    .upload-zone {
-      border: 2px dashed var(--gray-200);
-      border-radius: 12px;
-      padding: 24px;
-      text-align: center;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-    
-    .upload-zone:hover {
-      border-color: var(--primary);
-      background: var(--gray-50);
-    }
-    
-    .upload-zone.dragover {
-      border-color: var(--primary);
-      background: rgba(30, 64, 175, 0.05);
-    }
-    
     .creator-badge {
       display: flex;
       align-items: center;
@@ -306,6 +287,54 @@
       color: white;
       gap: 8px;
     }
+    
+    .keyword-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      margin: 4px;
+    }
+    
+    .keyword-present {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .keyword-missing {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .keyword-partial {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    .collapsible {
+      cursor: pointer;
+      user-select: none;
+      padding: 12px;
+      background: var(--gray-100);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .collapsible:hover {
+      background: var(--gray-200);
+    }
+    
+    .collapsible-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    
+    .collapsible-content.active {
+      max-height: 2000px;
+    }
   </style>
 </head>
 <body>
@@ -376,39 +405,79 @@
           <!-- Current Resume -->
           <div>
             <label class="block text-lg font-bold text-gray-900 mb-3">📄 Your Current Resume *</label>
-            <div class="mb-4">
-              <textarea 
-                id="resume-current"
-                rows="12"
-                placeholder="Paste your resume text here..."
-              ></textarea>
-            </div>
-            <div class="upload-zone" id="upload-zone-current">
-              <input type="file" id="file-current" accept=".pdf,.doc,.docx,.txt" class="hidden" onchange="handleFileUpload(event, 'current')">
-              <div class="text-gray-600">
-                <p class="font-semibold mb-1">Or Upload File</p>
-                <p class="text-sm">PDF, DOC, DOCX, or TXT</p>
-              </div>
-            </div>
+            <textarea 
+              id="resume-current"
+              rows="14"
+              placeholder="Paste your resume text here..."
+            ></textarea>
           </div>
 
           <!-- Master Resume (Optional) -->
           <div>
             <label class="block text-lg font-bold text-gray-900 mb-3">📑 Master Resume (Optional)</label>
             <p class="text-sm text-gray-600 mb-3">Include a comprehensive version to pull additional achievements from</p>
-            <div class="mb-4">
-              <textarea 
-                id="resume-master"
-                rows="12"
-                placeholder="Paste your master resume text here (optional)..."
-              ></textarea>
+            <textarea 
+              id="resume-master"
+              rows="14"
+              placeholder="Paste your master resume text here (optional)..."
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Advanced Features (Collapsible) -->
+        <div class="mb-8">
+          <div class="collapsible" onclick="toggleSection('advanced-features')">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-gray-900">⚡ Advanced Features (Optional - Click to Expand)</span>
+              <svg id="arrow-advanced-features" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
             </div>
-            <div class="upload-zone" id="upload-zone-master">
-              <input type="file" id="file-master" accept=".pdf,.doc,.docx,.txt" class="hidden" onchange="handleFileUpload(event, 'master')">
-              <div class="text-gray-600">
-                <p class="font-semibold mb-1">Or Upload File</p>
-                <p class="text-sm">PDF, DOC, DOCX, or TXT</p>
+          </div>
+          
+          <div id="content-advanced-features" class="collapsible-content">
+            <div class="p-6 bg-white border-2 border-gray-200 rounded-lg mt-2">
+              
+              <!-- Projects Library -->
+              <div class="mb-6">
+                <label class="block text-lg font-bold text-gray-900 mb-2">🚀 Projects Library</label>
+                <p class="text-sm text-gray-600 mb-3">
+                  List your key projects with metrics. CareerForge will auto-select the most relevant ones for each job.
+                </p>
+                <textarea 
+                  id="projects-library"
+                  rows="8"
+                  placeholder="Example format:&#10;&#10;Project: AWS Cloud Migration&#10;- Migrated 50+ applications to AWS, reducing infrastructure costs by 40%&#10;- Led team of 5 engineers, completed in 6 months&#10;- Technologies: AWS, Docker, Kubernetes&#10;&#10;Project: Data Pipeline Optimization&#10;- Built real-time data pipeline processing 2M transactions/day&#10;- Reduced processing time from 4 hours to 15 minutes&#10;- Tech stack: Python, Apache Kafka, PostgreSQL"
+                ></textarea>
               </div>
+
+              <!-- Target Company Info -->
+              <div class="mb-6">
+                <label class="block text-lg font-bold text-gray-900 mb-2">🏢 Company & Motivation (for Cover Letter)</label>
+                <p class="text-sm text-gray-600 mb-3">
+                  Why this company? What motivates you? This makes your cover letter stand out.
+                </p>
+                <textarea 
+                  id="company-motivation"
+                  rows="6"
+                  placeholder="Example:&#10;&#10;I've followed [Company]'s growth in the fintech space and am particularly impressed by your recent launch of [Product]. Having worked on similar payment systems at my previous role, I'm excited about contributing to your mission of democratizing financial services. Your company's focus on innovation and customer-centric design aligns perfectly with my approach to building scalable solutions."
+                ></textarea>
+              </div>
+
+              <!-- Current Job Title -->
+              <div>
+                <label class="block text-lg font-bold text-gray-900 mb-2">💼 Your Current Job Title</label>
+                <p class="text-sm text-gray-600 mb-3">
+                  We'll adjust this to match the job posting while staying truthful
+                </p>
+                <input 
+                  type="text"
+                  id="current-job-title"
+                  placeholder="e.g., Software Developer, Data Analyst, Product Manager"
+                  class="w-full border-2 border-gray-200 rounded-lg p-3"
+                />
+              </div>
+
             </div>
           </div>
         </div>
@@ -473,6 +542,18 @@
             </div>
           </div>
 
+          <!-- Keyword Coverage Map -->
+          <div class="comparison-card mb-6">
+            <h4 class="text-xl font-bold text-gray-900 mb-4">🎯 Keyword Coverage Map</h4>
+            <div id="keyword-coverage"></div>
+          </div>
+
+          <!-- Job Title Optimization -->
+          <div id="title-optimization" class="comparison-card mb-6 hidden">
+            <h4 class="text-xl font-bold text-gray-900 mb-4">💼 Job Title Optimization</h4>
+            <div id="title-content"></div>
+          </div>
+
           <!-- What Was Fixed -->
           <div class="comparison-card">
             <h4 class="text-xl font-bold text-gray-900 mb-4">🔍 What Was Holding You Back</h4>
@@ -514,6 +595,26 @@
             </button>
             <button class="btn-secondary" onclick="resetForm()">
               🔄 Optimize Another Job
+            </button>
+          </div>
+        </div>
+
+        <!-- Advanced Cover Letter -->
+        <div class="card p-8 mb-8">
+          <h3 class="text-2xl font-bold text-gray-900 mb-4">✉️ Your Personalized Cover Letter</h3>
+          <p class="text-gray-600 mb-6">
+            Deep elaboration on your skills, projects, and value proposition - designed to place you in the top 1% of applicants.
+          </p>
+          <div class="bg-gray-50 p-6 rounded-lg mb-6 border-2 border-gray-200">
+            <pre id="cover-letter" class="whitespace-pre-wrap font-sans text-sm leading-relaxed"></pre>
+          </div>
+          
+          <div class="flex gap-4 flex-wrap">
+            <button class="btn-secondary" onclick="copyToClipboard('cover-letter')">
+              📋 Copy Cover Letter
+            </button>
+            <button class="btn-secondary" onclick="downloadCoverLetterAsWord()">
+              📥 Download Cover Letter (.docx)
             </button>
           </div>
         </div>
@@ -667,6 +768,7 @@
   <script>
     let applications = [];
     let currentOptimizedResume = '';
+    let currentCoverLetter = '';
 
     // Load saved data
     function loadData() {
@@ -682,6 +784,19 @@
       localStorage.setItem('careerforge-apps', JSON.stringify(applications));
     }
 
+    // Toggle collapsible sections
+    function toggleSection(sectionId) {
+      const content = document.getElementById(`content-${sectionId}`);
+      const arrow = document.getElementById(`arrow-${sectionId}`);
+      
+      content.classList.toggle('active');
+      if (content.classList.contains('active')) {
+        arrow.style.transform = 'rotate(180deg)';
+      } else {
+        arrow.style.transform = 'rotate(0deg)';
+      }
+    }
+
     // Tab switching
     function switchTab(tab) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -689,28 +804,6 @@
       
       document.getElementById(`content-${tab}`).classList.remove('hidden');
       document.getElementById(`tab-${tab}`).classList.add('active');
-    }
-
-    // File upload handlers
-    document.getElementById('upload-zone-current').addEventListener('click', () => {
-      document.getElementById('file-current').click();
-    });
-
-    document.getElementById('upload-zone-master').addEventListener('click', () => {
-      document.getElementById('file-master').click();
-    });
-
-    async function handleFileUpload(event, type) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const text = e.target.result;
-        const targetId = type === 'current' ? 'resume-current' : 'resume-master';
-        document.getElementById(targetId).value = text;
-      };
-      reader.readAsText(file);
     }
 
     // Main analysis function
@@ -756,7 +849,17 @@
 
       } catch (error) {
         console.error('Error:', error);
-        alert('Analysis failed. Please try again.');
+        
+        // Hide progress
+        document.getElementById('progress-section').classList.add('hidden');
+        
+        // Show user-friendly error
+        alert('⚠️ Analysis Error\n\n' +
+              'There was an issue processing your request. This could be due to:\n\n' +
+              '1. API configuration (check Netlify environment variables)\n' +
+              '2. Network connectivity\n' +
+              '3. API rate limits\n\n' +
+              'Please try again in a moment. If the issue persists, contact support.');
       } finally {
         document.getElementById('analyze-btn').disabled = false;
       }
@@ -779,7 +882,7 @@
     }
 
     async function analyzeInitialATS(jobDesc, resume) {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+      const response = await fetch("/.netlify/functions/claude-proxy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -835,7 +938,7 @@ NICE_TO_HAVE:
     }
 
     async function detectRedFlags(jobDesc) {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+      const response = await fetch("/.netlify/functions/claude-proxy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -873,7 +976,7 @@ Be concise and direct.`
     }
 
     async function researchCompany(jobDesc) {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+      const response = await fetch("/.netlify/functions/claude-proxy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -903,15 +1006,20 @@ Keep concise - this feeds into resume optimization.`
     }
 
     async function optimizeResume(jobDesc, resumeCurrent, resumeMaster, companyInfo) {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+      // Get advanced features
+      const projectsLibrary = document.getElementById('projects-library').value.trim();
+      const companyMotivation = document.getElementById('company-motivation').value.trim();
+      const currentJobTitle = document.getElementById('current-job-title').value.trim();
+
+      const response = await fetch("/.netlify/functions/claude-proxy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
-          max_tokens: 8000,
+          max_tokens: 12000,
           messages: [{
             role: "user",
-            content: `You are an expert ATS resume optimizer. Rewrite this resume to achieve 99% ATS match.
+            content: `You are a Chief Human Resource Officer (CHRO) with 25+ years of experience optimizing resumes and cover letters for Fortune 500 companies. Your goal: achieve 99.99% ATS match to place this candidate in the TOP 1% of applicants.
 
 JOB DESCRIPTION:
 ${jobDesc}
@@ -921,31 +1029,86 @@ ${resumeCurrent}
 
 ${resumeMaster ? `MASTER RESUME (pull additional achievements):\n${resumeMaster}\n` : ''}
 
+${projectsLibrary ? `PROJECTS LIBRARY (auto-select 2-3 most relevant):\n${projectsLibrary}\n` : ''}
+
+${currentJobTitle ? `CURRENT JOB TITLE: ${currentJobTitle}\n` : ''}
+
 COMPANY RESEARCH:
 ${companyInfo}
 
-Create an optimized resume that:
-1. Achieves 99% ATS match
-2. Incorporates ALL critical keywords naturally
-3. Uses exact terminology from job posting
-4. Quantifies achievements with metrics
-5. Mirrors job description language
-6. Highlights company-specific fit
-7. Maintains truthfulness
+${companyMotivation ? `CANDIDATE'S MOTIVATION:\n${companyMotivation}\n` : ''}
 
-ALSO provide:
+**CRITICAL REQUIREMENTS:**
+
+1. **JOB TITLE OPTIMIZATION**:
+   - Analyze the job title in the description
+   - Adjust candidate's title to match closely while staying truthful
+   - Example: "Software Developer" → "Full Stack Software Engineer" (if applicable)
+   - Provide: ORIGINAL_TITLE → OPTIMIZED_TITLE with brief explanation
+
+2. **KEYWORD COVERAGE (99.99% target)**:
+   - Extract ALL critical keywords from job description
+   - Map each keyword to resume presence
+   - Categorize as: PRESENT / MISSING / PARTIAL
+   - List top 10 critical keywords with status
+
+3. **PROJECT ENRICHMENT**:
+   - From projects library, auto-select 2-3 MOST relevant projects
+   - Add them with specific metrics and outcomes
+   - Tie each project to a required skill/qualification
+
+4. **RESUME OPTIMIZATION**:
+   - Incorporate ALL critical keywords naturally
+   - Use EXACT terminology from job posting
+   - Quantify ALL achievements with metrics
+   - Mirror job description language and phrasing
+   - Front-load important keywords in each section
+   - Remove graduation years from education
+   - Maintain reverse chronological order ALWAYS
+   - Format for ATS parsing (no tables, clear sections)
+
+5. **ADVANCED COVER LETTER**:
+   - Go DEEP on 2-3 specific projects with concrete metrics
+   - Explain HOW candidate will add value (not just that they can)
+   - Reference company research and motivation
+   - Show understanding of company's challenges/mission
+   - Use candidate's voice (professional but authentic)
+   - 3-4 paragraphs, ~350-400 words
+   - Place candidate as TOP 1% applicant
+
+**OUTPUT FORMAT:**
+
+TITLE_OPTIMIZATION:
+Original: [current title]
+Optimized: [adjusted title]
+Reasoning: [why this works]
+
+KEYWORD_COVERAGE:
+✅ PRESENT (X keywords): [list with badges]
+❌ MISSING (Y keywords): [list - these MUST be added]
+🟡 PARTIAL (Z keywords): [list - need stronger emphasis]
+
+CRITICAL_KEYWORDS_TOP_10:
+1. [keyword] - [PRESENT/MISSING/PARTIAL]
+2. [keyword] - [status]
+...
+
+SELECTED_PROJECTS:
+1. [Project name] - [Why selected] - [Key metrics]
+2. [Project name] - [Why selected] - [Key metrics]
+
+OPTIMIZED_RESUME:
+[Full optimized resume with ALL improvements]
+
+COVER_LETTER:
+[Deep, elaborative cover letter showcasing concrete projects, metrics, and value]
 
 FIXES_APPLIED:
 - [specific fix 1]
 - [specific fix 2]
-- [etc]
+...
 
-Format: 
-OPTIMIZED_RESUME:
-[full resume text]
-
-FIXES_APPLIED:
-[list of changes]`
+Make this candidate IMPOSSIBLE to ignore.`
           }]
         })
       });
@@ -962,6 +1125,57 @@ FIXES_APPLIED:
       // Display scores
       displayScore('initial-score-circle', initialScore);
       displayScore('optimized-score-circle', 99);
+
+      // Display Title Optimization
+      const titleOptMatch = optimization.match(/TITLE_OPTIMIZATION:([\s\S]+?)(?=KEYWORD_COVERAGE:|$)/i);
+      if (titleOptMatch) {
+        const titleSection = document.getElementById('title-optimization');
+        const titleContent = document.getElementById('title-content');
+        titleContent.innerHTML = formatText(titleOptMatch[1]);
+        titleSection.classList.remove('hidden');
+      }
+
+      // Display Keyword Coverage
+      const keywordCovMatch = optimization.match(/KEYWORD_COVERAGE:([\s\S]+?)(?=CRITICAL_KEYWORDS_TOP_10:|SELECTED_PROJECTS:|$)/i);
+      if (keywordCovMatch) {
+        const keywords = keywordCovMatch[1];
+        let keywordHTML = '';
+        
+        // Parse PRESENT keywords
+        const presentMatch = keywords.match(/✅ PRESENT[^:]*:([\s\S]+?)(?=❌|🟡|$)/i);
+        if (presentMatch) {
+          const keywordsList = presentMatch[1].split(/,|\n/).map(k => k.trim().replace(/^[-•*]\s*/, '')).filter(k => k && k.length > 1);
+          keywordHTML += '<div class="mb-4"><strong class="text-green-700">✅ Keywords You Have:</strong><br>';
+          keywordsList.forEach(kw => {
+            if (kw) keywordHTML += `<span class="keyword-badge keyword-present">${kw}</span>`;
+          });
+          keywordHTML += '</div>';
+        }
+        
+        // Parse MISSING keywords
+        const missingMatch = keywords.match(/❌ MISSING[^:]*:([\s\S]+?)(?=✅|🟡|$)/i);
+        if (missingMatch) {
+          const keywordsList = missingMatch[1].split(/,|\n/).map(k => k.trim().replace(/^[-•*]\s*/, '')).filter(k => k && k.length > 1);
+          keywordHTML += '<div class="mb-4"><strong class="text-red-700">❌ Critical Keywords Missing (Now Added):</strong><br>';
+          keywordsList.forEach(kw => {
+            if (kw) keywordHTML += `<span class="keyword-badge keyword-missing">${kw}</span>`;
+          });
+          keywordHTML += '</div>';
+        }
+        
+        // Parse PARTIAL keywords
+        const partialMatch = keywords.match(/🟡 PARTIAL[^:]*:([\s\S]+?)(?=✅|❌|$)/i);
+        if (partialMatch) {
+          const keywordsList = partialMatch[1].split(/,|\n/).map(k => k.trim().replace(/^[-•*]\s*/, '')).filter(k => k && k.length > 1);
+          keywordHTML += '<div class="mb-4"><strong class="text-yellow-700">🟡 Keywords Enhanced:</strong><br>';
+          keywordsList.forEach(kw => {
+            if (kw) keywordHTML += `<span class="keyword-badge keyword-partial">${kw}</span>`;
+          });
+          keywordHTML += '</div>';
+        }
+        
+        document.getElementById('keyword-coverage').innerHTML = keywordHTML || '<p class="text-gray-600">Keyword analysis in progress...</p>';
+      }
 
       // Parse and display gaps
       const criticalGaps = extractSection(optimization, 'CRITICAL_GAPS');
@@ -1022,10 +1236,21 @@ FIXES_APPLIED:
       document.getElementById('company-research').innerHTML = `<div class="prose max-w-none">${formatText(companyInfo)}</div>`;
 
       // Display optimized resume
-      const resumeMatch = optimization.match(/OPTIMIZED_RESUME:([\s\S]+?)(?:FIXES_APPLIED:|$)/i);
+      const resumeMatch = optimization.match(/OPTIMIZED_RESUME:([\s\S]+?)(?:COVER_LETTER:|FIXES_APPLIED:|$)/i);
       const optimizedResume = resumeMatch ? resumeMatch[1].trim() : optimization;
       currentOptimizedResume = optimizedResume;
       document.getElementById('optimized-resume').textContent = optimizedResume;
+
+      // Display cover letter
+      const coverLetterMatch = optimization.match(/COVER_LETTER:([\s\S]+?)(?=FIXES_APPLIED:|$)/i);
+      if (coverLetterMatch) {
+        const coverLetter = coverLetterMatch[1].trim();
+        currentCoverLetter = coverLetter;
+        document.getElementById('cover-letter').textContent = coverLetter;
+      } else {
+        currentCoverLetter = "";
+        document.getElementById('cover-letter').textContent = "Cover letter will be generated in the optimization.";
+      }
 
       // Show results
       document.getElementById('progress-section').classList.add('hidden');
@@ -1073,7 +1298,14 @@ FIXES_APPLIED:
       }
 
       try {
-        const { Document, Paragraph, TextRun, AlignmentType, Packer } = docx;
+        // Check if docx library is loaded
+        if (typeof docx === 'undefined') {
+          alert('Word export feature is loading. Please try again in a moment.');
+          console.error('docx library not loaded yet');
+          return;
+        }
+
+        const { Document, Paragraph, TextRun, Packer } = docx;
         
         const doc = new Document({
           sections: [{
@@ -1091,7 +1323,41 @@ FIXES_APPLIED:
         saveAs(blob, 'optimized-resume-careerforge.docx');
       } catch (error) {
         console.error('Download error:', error);
-        alert('Download failed. Please copy the text and paste into Word manually.');
+        alert('Word download is temporarily unavailable. Please copy the text and paste into Word manually.');
+      }
+    }
+
+    async function downloadCoverLetterAsWord() {
+      if (!currentCoverLetter) {
+        alert('No cover letter to download');
+        return;
+      }
+
+      try {
+        if (typeof docx === 'undefined') {
+          alert('Word export feature is loading. Please try again in a moment.');
+          return;
+        }
+
+        const { Document, Paragraph, TextRun, Packer } = docx;
+        
+        const doc = new Document({
+          sections: [{
+            properties: {},
+            children: currentCoverLetter.split('\n').map(line => 
+              new Paragraph({
+                children: [new TextRun(line)],
+                spacing: { after: 100 }
+              })
+            )
+          }]
+        });
+
+        const blob = await Packer.toBlob(doc);
+        saveAs(blob, 'cover-letter-careerforge.docx');
+      } catch (error) {
+        console.error('Download error:', error);
+        alert('Word download is temporarily unavailable. Please copy the text and paste into Word manually.');
       }
     }
 
@@ -1140,7 +1406,7 @@ FIXES_APPLIED:
       document.getElementById('star-results').classList.add('hidden');
 
       try {
-        const response = await fetch("https://api.anthropic.com/v1/messages", {
+        const response = await fetch("/.netlify/functions/claude-proxy", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
