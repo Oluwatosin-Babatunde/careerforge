@@ -9,7 +9,7 @@
 
 ---
 
-## 🚀 **What is CareerForge?**
+## **What is CareerForge?**
 
 CareerForge is a comprehensive AI-powered job search platform that helps job seekers:
 
