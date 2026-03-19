@@ -12,12 +12,6 @@
   # Paid tiers support up to 10 minutes
   node_bundler = "esbuild"
 
-[[redirects]]
-  # Redirect API calls to function
-  from = "/.netlify/functions/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-
 [[headers]]
   # Security headers for all pages
   for = "/*"
