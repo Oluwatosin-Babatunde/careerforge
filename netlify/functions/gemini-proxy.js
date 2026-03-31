@@ -23,30 +23,57 @@ exports.handler = async (event) => {
     const apiKey = process.env.GEMINI_API_KEY;
     
     if (!apiKey) {
+      console.error('GEMINI_API_KEY not found');
       return { 
         statusCode: 500, 
         headers, 
-        body: JSON.stringify({ error: 'GEMINI_API_KEY not configured' }) 
+        body: JSON.stringify({ error: 'GEMINI_API_KEY not configured. Please add it to Netlify environment variables.' }) 
       };
     }
 
     const requestData = JSON.parse(event.body);
+    console.log('Request received, converting to Gemini format...');
+
+    // Convert Claude format to Gemini format
+    let promptText = '';
+    
+    if (requestData.messages && Array.isArray(requestData.messages)) {
+      // Convert messages array to single prompt
+      promptText = requestData.messages
+        .map(msg => {
+          if (typeof msg.content === 'string') {
+            return msg.content;
+          } else if (Array.isArray(msg.content)) {
+            return msg.content.map(c => c.text || '').join('\n');
+          }
+          return '';
+        })
+        .join('\n\n');
+    } else if (requestData.prompt) {
+      promptText = requestData.prompt;
+    } else {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: 'No prompt or messages found in request' })
+      };
+    }
 
     return new Promise((resolve) => {
-      // Convert to Gemini API format
       const geminiRequest = {
         contents: [
           {
             parts: [
               {
-                text: requestData.prompt || requestData.messages?.map(m => m.content).join('\n\n')
+                text: promptText
               }
             ]
           }
         ],
         generationConfig: {
           temperature: 0.7,
-          maxOutputTokens: requestData.max_tokens || 4000
+          maxOutputTokens: 8000,
+          topP: 0.95
         }
       };
 
@@ -59,46 +86,106 @@ exports.handler = async (event) => {
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(postData)
-        }
+        },
+        timeout: 60000
       };
+
+      console.log('Calling Gemini API...');
 
       const req = https.request(options, (res) => {
         let data = '';
         res.on('data', (chunk) => data += chunk);
         res.on('end', () => {
+          console.log(`Gemini response status: ${res.statusCode}`);
+          
           try {
             const geminiResponse = JSON.parse(data);
             
-            // Convert Gemini response to Claude-like format for compatibility
+            if (res.statusCode !== 200) {
+              console.error('Gemini API error:', geminiResponse);
+              resolve({
+                statusCode: res.statusCode,
+                headers,
+                body: JSON.stringify({ 
+                  error: geminiResponse.error?.message || 'Gemini API error',
+                  details: geminiResponse
+                })
+              });
+              return;
+            }
+            
+            // Extract text from Gemini response
+            const responseText = geminiResponse.candidates?.[0]?.content?.parts?.[0]?.text;
+            
+            if (!responseText) {
+              console.error('No text in Gemini response:', geminiResponse);
+              resolve({
+                statusCode: 500,
+                headers,
+                body: JSON.stringify({ 
+                  error: 'No response text from Gemini',
+                  response: geminiResponse
+                })
+              });
+              return;
+            }
+            
+            // Convert to Claude-compatible format
             const claudeFormat = {
               content: [
                 {
                   type: 'text',
-                  text: geminiResponse.candidates?.[0]?.content?.parts?.[0]?.text || 'No response'
+                  text: responseText
                 }
-              ]
+              ],
+              id: 'gemini-' + Date.now(),
+              model: 'gemini-1.5-flash',
+              role: 'assistant'
             };
             
+            console.log('Successfully converted response');
+            
             resolve({
-              statusCode: res.statusCode,
+              statusCode: 200,
               headers,
               body: JSON.stringify(claudeFormat)
             });
-          } catch (e) {
+          } catch (parseError) {
+            console.error('JSON parse error:', parseError);
             resolve({
               statusCode: 500,
               headers,
-              body: JSON.stringify({ error: 'Parse failed', raw: data.substring(0, 200) })
+              body: JSON.stringify({ 
+                error: 'Failed to parse Gemini response',
+                details: data.substring(0, 500)
+              })
             });
           }
         });
       });
 
       req.on('error', (error) => {
+        console.error('Request error:', error);
         resolve({
           statusCode: 500,
           headers,
-          body: JSON.stringify({ error: error.message })
+          body: JSON.stringify({ 
+            error: 'Failed to connect to Gemini API',
+            message: error.message
+          })
+        });
+      });
+
+      req.on('timeout', () => {
+        console.error('Request timeout');
+        req.destroy();
+        resolve({
+          statusCode: 504,
+          headers,
+          body: JSON.stringify({ 
+            error: 'Request timeout',
+            message: 'Gemini API took too long to respond'
+          })
         });
       });
 
@@ -107,10 +194,15 @@ exports.handler = async (event) => {
     });
 
   } catch (error) {
+    console.error('Function error:', error);
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: error.message })
+      body: JSON.stringify({ 
+        error: 'Internal server error',
+        message: error.message,
+        stack: error.stack
+      })
     };
   }
 };
