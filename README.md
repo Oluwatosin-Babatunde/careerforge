@@ -23,7 +23,7 @@ CareerForge is a comprehensive AI-powered job search platform that helps job see
 - **Prepare for interviews** with AI-generated STAR-method answers
 - **Track applications** and get follow-up suggestions
 
-**Built with Claude AI** to give you a competitive edge in your job search.
+**Built with Gemini AI** to give you a competitive edge in your job search.
 
 ---
 
@@ -132,7 +132,7 @@ CareerForge is a comprehensive AI-powered job search platform that helps job see
 ## **Technology Stack**
 
 - **Frontend**: HTML5, CSS3 (Tailwind CSS), JavaScript (ES6+)
-- **AI Engine**: Claude Sonnet 4 (Anthropic API)
+- **AI Engine**: Gemini Sonnet 4 (Anthropic API)
 - **Backend**: Netlify Serverless Functions
 - **Document Generation**: docx.js, FileSaver.js
 - **Storage**: Browser LocalStorage (no server storage)
@@ -280,7 +280,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## **Acknowledgments**
 
-- Built with [Claude AI](https://claude.ai) by Anthropic
+- Built with [Gemini AI](https://Gemini.ai) by Anthropic
 - Inspired by the need to make job searching faster and more effective
 - Special thanks to the job seeking community for feedback and feature requests
 - Enhanced features inspired by best practices from Fortune 500 CHROs
