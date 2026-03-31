@@ -754,7 +754,7 @@
   <footer class="bg-gray-900 text-white py-8 mt-16">
     <div class="max-w-7xl mx-auto px-6 text-center">
       <p class="text-gray-400 text-lg">
-        <strong class="text-white">CareerForge</strong> - Powered by Claude AI
+        <strong class="text-white">CareerForge</strong> - Powered by gemini AI
       </p>
       <p class="text-gray-500 mt-2">
         Created by <a href="https://www.linkedin.com/in/oluwatosin-agbaakin/" target="_blank" class="text-blue-400 hover:text-blue-300 font-semibold">Oluwatosin Agbaakin</a>
@@ -882,11 +882,11 @@
     }
 
     async function analyzeInitialATS(jobDesc, resume) {
-      const response = await fetch("/.netlify/functions/claude-proxy", {
+      const response = await fetch("/.netlify/functions/gemini-proxy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "gemini-sonnet-4-20250514",
           max_tokens: 3000,
           messages: [{
             role: "user",
@@ -938,11 +938,11 @@ NICE_TO_HAVE:
     }
 
     async function detectRedFlags(jobDesc) {
-      const response = await fetch("/.netlify/functions/claude-proxy", {
+      const response = await fetch("/.netlify/functions/gemini-proxy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "gemini-sonnet-4-20250514",
           max_tokens: 2000,
           messages: [{
             role: "user",
@@ -976,11 +976,11 @@ Be concise and direct.`
     }
 
     async function researchCompany(jobDesc) {
-      const response = await fetch("/.netlify/functions/claude-proxy", {
+      const response = await fetch("/.netlify/functions/gemini-proxy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "gemini-sonnet-4-20250514",
           max_tokens: 2000,
           messages: [{
             role: "user",
@@ -1011,11 +1011,11 @@ Keep concise - this feeds into resume optimization.`
       const companyMotivation = document.getElementById('company-motivation').value.trim();
       const currentJobTitle = document.getElementById('current-job-title').value.trim();
 
-      const response = await fetch("/.netlify/functions/claude-proxy", {
+      const response = await fetch("/.netlify/functions/gemini-proxy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "gemini-sonnet-4-20250514",
           max_tokens: 12000,
           messages: [{
             role: "user",
@@ -1406,11 +1406,11 @@ Make this candidate IMPOSSIBLE to ignore.`
       document.getElementById('star-results').classList.add('hidden');
 
       try {
-        const response = await fetch("/.netlify/functions/claude-proxy", {
+        const response = await fetch("/.netlify/functions/gemini-proxy", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            model: "claude-sonnet-4-20250514",
+            model: "gemini-sonnet-4-20250514",
             max_tokens: 2000,
             messages: [{
               role: "user",
